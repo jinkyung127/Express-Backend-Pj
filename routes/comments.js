@@ -52,9 +52,9 @@ router.get("/:_postId", async (req, res) => {
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
     }
 
-    const comments = await Comment.find({ postId: _postId }).select(
-      "-password -__v"
-    );
+    const comments = await Comment.find({ postId: _postId })
+      .select("-password -__v")
+      .sort({ createdAt: -1 });
 
     res.json({ data: comments });
   } catch (error) {
