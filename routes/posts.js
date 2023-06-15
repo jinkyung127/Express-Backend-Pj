@@ -5,8 +5,8 @@ const router = express.Router();
 // 게시글 조회 API
 router.get("/", async (req, res) => {
   const posts = await Posts.find()
-    .select("-password -content -__v")
-    .sort({ createdAt: -1 }); // "password", "content", "__v" 제외
+    .select("-password -content -__v") // "password", "content", "__v" 제외
+    .sort({ createdAt: -1 }); // 내림차순
   res.json({ data: posts });
 });
 
