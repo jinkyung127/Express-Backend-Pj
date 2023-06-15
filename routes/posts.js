@@ -3,13 +3,13 @@ const Posts = require("../schemas/post.js");
 const router = express.Router();
 
 // 게시글 조회 API
-router.get("/posts", async (req, res) => {
+router.get("/", async (req, res) => {
   const posts = await Posts.find().select("-password -content -__v"); // "password", "content", "__v" 제외
   res.json({ data: posts });
 });
 
 // 게시글 상세 조회 API
-router.get("/posts/:_postId", async (req, res) => {
+router.get("/:_postId", async (req, res) => {
   const { _postId } = req.params;
   const post = await Posts.findById(_postId).select("-password -__v"); // "password", "__v" 제외
   if (!post) {
@@ -19,7 +19,7 @@ router.get("/posts/:_postId", async (req, res) => {
 });
 
 // 게시글 작성
-router.post("/posts", async (req, res) => {
+router.post("/", async (req, res) => {
   const { user, password, title, content } = req.body;
 
   if (!user || !password || !title || !content) {
@@ -34,7 +34,7 @@ router.post("/posts", async (req, res) => {
 });
 
 // 게시글 삭제 API
-router.delete("/posts/:_postId", async (req, res) => {
+router.delete("/:_postId", async (req, res) => {
   const { _postId } = req.params;
   const { password } = req.body;
 
@@ -55,7 +55,7 @@ router.delete("/posts/:_postId", async (req, res) => {
 });
 
 // 게시글 수정 API
-router.put("/posts/:_postId", async (req, res) => {
+router.put("/:_postId", async (req, res) => {
   const { _postId } = req.params;
   const { password, content, title } = req.body;
 

@@ -5,7 +5,7 @@ const Post = require("../schemas/post");
 const mongoose = require("mongoose");
 
 // 댓글 작성
-router.post("/comments/:_postId", async (req, res) => {
+router.post("/:_postId", async (req, res) => {
   const { _postId } = req.params;
   const { user, password, content } = req.body;
 
@@ -36,26 +36,30 @@ router.post("/comments/:_postId", async (req, res) => {
 });
 
 // 댓글 조회 API
-router.get("/comments/:_postId", async (req, res) => {
-  const { _postId } = req.params;
+router.get("/:_postId", async (req, res) => {
+  try {
+    const { _postId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(_postId)) {
-    return res
-      .status(400)
-      .json({ message: "데이터 형식이 올바르지 않습니다." });
+    if (!mongoose.Types.ObjectId.isValid(_postId)) {
+      return res
+        .status(400)
+        .json({ message: "데이터 형식이 올바르지 않습니다." });
+    }
+
+    const post = await Post.findById(_postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+    }
+
+    const comments = await Comment.find({ postId: _postId }).select(
+      "-password -__v"
+    );
+
+    res.json({ data: comments });
+  } catch (error) {
+    console.error(error);
   }
-
-  const post = await Post.findById(_postId);
-
-  if (!post) {
-    return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
-  }
-
-  const comments = await Comment.find({ postId: _postId }).select(
-    "-password -__v"
-  );
-
-  res.json({ data: comments });
 });
 
 // router.get("/comments", (req, res) => {
@@ -63,7 +67,7 @@ router.get("/comments/:_postId", async (req, res) => {
 // });
 
 // 댓글 수정 API
-router.put("/comments/:_commentId", async (req, res) => {
+router.put("/:_commentId", async (req, res) => {
   const { _commentId } = req.params;
   const { password, content } = req.body;
 
@@ -100,7 +104,7 @@ router.put("/comments/:_commentId", async (req, res) => {
 // });
 
 // 댓글 삭제 API
-router.delete("/comments/:_commentId", async (req, res) => {
+router.delete("/:_commentId", async (req, res) => {
   const { _commentId } = req.params;
   const { password } = req.body;
 
